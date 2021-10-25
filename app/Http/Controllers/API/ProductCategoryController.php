@@ -12,40 +12,38 @@ class ProductCategoryController extends Controller
     public function all(Request $request)
     {
         $id = $request->input('id');
-        $limit = $request->input('limit');
-        $name = $request->input('id');
+        $limit = $request->input('limit', 6);
+        $name = $request->input('name');
         $show_product = $request->input('show_product');
 
-        if ($id) {
+        if($id)
+        {
             $category = ProductCategory::with(['products'])->find($id);
 
-            if ($category) {
+            if($category)
                 return ResponseFormatter::success(
                     $category,
-                    'Data kategori berhasil diambil'
+                    'Data produk berhasil diambil'
                 );
-            } else {
+            else
                 return ResponseFormatter::error(
                     null,
-                    'Data kategori tidak ada',
+                    'Data kategori produk tidak ada',
                     404
                 );
-            }
         }
 
         $category = ProductCategory::query();
 
-        if ($name) {
+        if($name)
             $category->where('name', 'like', '%' . $name . '%');
-        }
 
-        if ($show_product) {
+        if($show_product)
             $category->with('products');
-        }
 
         return ResponseFormatter::success(
             $category->paginate($limit),
-            'Data list kategori berhasil diambil'
+            'Data list kategori produk berhasil diambil'
         );
     }
 }

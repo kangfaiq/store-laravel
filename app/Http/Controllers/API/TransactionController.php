@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Transaction;
-use Illuminate\Http\Request;
-use App\Models\TransactionItem;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
+use App\Models\TransactionItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
@@ -17,10 +17,11 @@ class TransactionController extends Controller
         $limit = $request->input('limit', 6);
         $status = $request->input('status');
 
-        if ($id) {
+        if($id)
+        {
             $transaction = Transaction::with(['items.product'])->find($id);
 
-            if ($transaction)
+            if($transaction)
                 return ResponseFormatter::success(
                     $transaction,
                     'Data transaksi berhasil diambil'
@@ -35,7 +36,7 @@ class TransactionController extends Controller
 
         $transaction = Transaction::with(['items.product'])->where('users_id', Auth::user()->id);
 
-        if ($status)
+        if($status)
             $transaction->where('status', $status);
 
         return ResponseFormatter::success(
@@ -44,6 +45,10 @@ class TransactionController extends Controller
         );
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function checkout(Request $request)
     {
         $request->validate([
@@ -61,7 +66,7 @@ class TransactionController extends Controller
             'shipping_price' => $request->shipping_price,
             'status' => $request->status
         ]);
-
+        
         foreach ($request->items as $product) {
             TransactionItem::create([
                 'users_id' => Auth::user()->id,
